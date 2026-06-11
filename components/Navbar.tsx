@@ -1,21 +1,56 @@
-import Link from 'next/link'
+"use client";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import React, { useEffect, useRef, useState } from "react";
 
-export default function Navbar() {
-  return (
-    <nav className="w-full border-b border-zinc-200 dark:border-zinc-800">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-16 py-4">
-        <Link href="/" className="font-semibold text-black dark:text-zinc-50">
-          Your Name
-        </Link>
-        <div className="flex gap-6 text-sm text-zinc-600 dark:text-zinc-400">
-          <Link href="/experience" className="hover:text-black dark:hover:text-zinc-50">
-            Experience
-          </Link>
-          <Link href="/contact" className="hover:text-black dark:hover:text-zinc-50">
-            Contact
-          </Link>
-        </div>
-      </div>
-    </nav>
-  )
-}
+export const Navigation: React.FC = () => {
+	const ref = useRef<HTMLElement>(null);
+	const [isIntersecting, setIntersecting] = useState(true);
+
+	useEffect(() => {
+		if (!ref.current) return;
+		const observer = new IntersectionObserver(([entry]) =>
+			setIntersecting(entry.isIntersecting),
+		);
+
+		observer.observe(ref.current);
+		return () => observer.disconnect();
+	}, []);
+
+	return (
+		<header ref={ref}>
+			<div
+				className={`fixed inset-x-0 top-0 z-50 backdrop-blur  duration-200 border-b  ${
+					isIntersecting
+						? "bg-zinc-900/0 border-transparent"
+						: "bg-zinc-900/500  border-zinc-800 "
+				}`}
+			>
+				<div className="container flex flex-row-reverse items-center justify-between p-6 mx-auto max-w-[1280px] w-full">
+					<div className="flex justify-between gap-8">
+						<Link
+							href="/experience"
+							className="duration-200 text-zinc-400 hover:text-zinc-100"
+						>
+							Experience
+						</Link>
+						<Link
+							href="/contact"
+							className="duration-200 text-zinc-400 hover:text-zinc-100"
+						>
+							Contact
+						</Link>
+					</div>
+
+					<Link
+						href="/"
+						className="duration-200 text-zinc-300 hover:text-zinc-100"
+					>
+						<ArrowLeft className="w-6 h-6 " />
+					</Link>
+				</div>
+			</div>
+		</header>
+	);
+};
+export default Navigation;
